@@ -36,11 +36,11 @@ function init() {
         map: smokeTexture,
         transparent: true
     });
-    smokeGeo = new THREE.SphereGeometry(50,100,100);
+    smokeGeo = new THREE.SphereGeometry(50,100,100); //smoke shape
     smokeParticles = [];
 
 
-    for (p = 0; p < 15; p++) {
+    for (p = 0; p < 15; p++) {  //count of shape 
         var particle = new THREE.Mesh(smokeGeo, smokeMaterial);
         particle.position.set((Math.random() * 10 - 5), Math.random() * 10 - 5, Math.random() * 10 - 5);
         particle.rotation.z = Math.random() * 10;

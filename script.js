@@ -14,8 +14,8 @@ function init() {
     clock = new THREE.Clock();
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-    camera.position.set(0, 30, 30);
-    camera.lookAt(new THREE.Vector3(0,0,50));
+    camera.position.set(40, 30, 5);
+    camera.lookAt(new THREE.Vector3(30,0,20));
 
     ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
@@ -36,14 +36,14 @@ function init() {
         map: smokeTexture,
         transparent: true
     });
-    smokeGeo = new THREE.PlaneGeometry(300, 300);
+    smokeGeo = new THREE.SphereGeometry(50,100,100);
     smokeParticles = [];
 
 
-    for (p = 0; p < 50; p++) {
+    for (p = 0; p < 15; p++) {
         var particle = new THREE.Mesh(smokeGeo, smokeMaterial);
-        particle.position.set(Math.random() * 100 - 50, Math.random() * 100 - 50, Math.random() * 100 - 10);
-        particle.rotation.z = Math.random() * 100;
+        particle.position.set((Math.random() * 10 - 5), Math.random() * 10 - 5, Math.random() * 10 - 5);
+        particle.rotation.z = Math.random() * 10;
         scene.add(particle);
         smokeParticles.push(particle);
     }
@@ -56,7 +56,7 @@ function init() {
         objLoader.setMaterials(materials);
         objLoader.load('models/ship_wreck.obj', function (mesh) {
             mesh.scale.set(0.5, 0.5, 0.5);
-            mesh.position.set(0,-10,-30);
+            mesh.position.set(0,0,-5);
             scene.add(mesh);
         });
     });
@@ -93,6 +93,7 @@ function animate() {
     controls.update();
 
     evolveSmoke();
+    
     render();
 
 

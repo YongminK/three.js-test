@@ -14,22 +14,8 @@ function init() {
     clock = new THREE.Clock();
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-    camera.position.set(40,40,0);
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
-
-
-
-    // meshFloor = new THREE.Mesh(
-    //     new THREE.PlaneGeometry(20, 20, 10, 10),
-    //     new THREE.MeshPhongMaterial({
-    //         color: 0xffffff,
-    //         wireframe: false
-    //     })
-
-    // );
-    // meshFloor.receiveShadow = true;
-    // meshFloor.rotation.x -= Math.PI / 2;
-    // scene.add(meshFloor);
+    camera.position.set(0, 30, 30);
+    camera.lookAt(new THREE.Vector3(0,0,50));
 
     ambientLight = new THREE.AmbientLight(0xffffff, 0.2);
     scene.add(ambientLight);
@@ -40,36 +26,28 @@ function init() {
     light.shadow.camera.near = 0.1;
     light.shadow.camera.far = 25;
     scene.add(light);
+    //SMOKE
 
-
-    geometry = new THREE.CubeGeometry( 10, 10, 10 );
-    material = new THREE.MeshLambertMaterial( { color: 0xaa6666, wireframe: false } );
-    mesh = new THREE.Mesh( geometry, material );
-    //scene.add( mesh );
-    cubeSineDriver = 0;
- 
-   
     THREE.ImageUtils.crossOrigin = ''; //Need this to pull in crossdomain images from AWS
-    
 
-    // light = new THREE.DirectionalLight(0xffffff,0.5);
-    // light.position.set(-1,0,1);
-    // scene.add(light);
-  
     smokeTexture = THREE.ImageUtils.loadTexture('https://s3-us-west-2.amazonaws.com/s.cdpn.io/95637/Smoke-Element.png');
-    smokeMaterial = new THREE.MeshLambertMaterial({color: 0x00dddd, map: smokeTexture, transparent: true});
-    smokeGeo = new THREE.PlaneGeometry(300,300);
+    smokeMaterial = new THREE.MeshLambertMaterial({
+        color: 0x00dddd,
+        map: smokeTexture,
+        transparent: true
+    });
+    smokeGeo = new THREE.PlaneGeometry(300, 300);
     smokeParticles = [];
 
 
     for (p = 0; p < 50; p++) {
-        var particle = new THREE.Mesh(smokeGeo,smokeMaterial);
-        particle.position.set(Math.random()*100-50,Math.random()*100-50,Math.random()*100-10);
+        var particle = new THREE.Mesh(smokeGeo, smokeMaterial);
+        particle.position.set(Math.random() * 100 - 50, Math.random() * 100 - 50, Math.random() * 100 - 10);
         particle.rotation.z = Math.random() * 100;
         scene.add(particle);
         smokeParticles.push(particle);
     }
- 
+    //SHIP
 
     var mtlLoader = new THREE.MTLLoader();
     mtlLoader.load('models/ship_wreck.mtl', function (materials) {
@@ -78,10 +56,25 @@ function init() {
         objLoader.setMaterials(materials);
         objLoader.load('models/ship_wreck.obj', function (mesh) {
             mesh.scale.set(0.5, 0.5, 0.5);
+            mesh.position.set(0,-10,-30);
             scene.add(mesh);
         });
     });
+    controls = new THREE.TrackballControls(camera);
 
+    controls.rotateSpeed = 1.0;
+    controls.zoomSpeed = 1.2;
+    controls.panSpeed = 0.8;
+
+    controls.noZoom = false;
+    controls.noPan = false;
+
+    controls.staticMoving = true;
+    controls.dynamicDampingFactor = 0.3;
+
+    controls.keys = [65, 83, 68];
+
+    controls.addEventListener('change', render);
 
 
     renderer = new THREE.WebGLRenderer();
@@ -97,9 +90,15 @@ function init() {
 function animate() {
     requestAnimationFrame(animate);
     delta = clock.getDelta();
+    controls.update();
+
     evolveSmoke();
+    render();
 
 
+   
+}
+function render(){
     renderer.render(scene, camera);
 }
 

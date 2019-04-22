@@ -72,6 +72,8 @@ function init() {
         var objLoader = new THREE.OBJLoader();
         objLoader.setMaterials(materials);
         objLoader.load('models/boat_small.obj', function(mesh){
+            mesh.scale.set(2,2,2);
+            mesh.position.set(2,2,2);ss
             scene.add(mesh);
            
 
@@ -84,7 +86,7 @@ function init() {
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.BasicShadowMap
+    renderer.shadowMap.type = THREE.BasicShadowMap;
     document.body.appendChild(renderer.domElement);
     // renderer.setClearColor(0xffffff);
 
